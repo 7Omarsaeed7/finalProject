@@ -8,7 +8,6 @@ class ServiceError extends Error {
 const Product = require("../models/Product");
 const getAllProducts = async () => {
   try {
-    // .find({}) retrieves all documents in the collection
     const allProducts = await Product.find({});
     return allProducts;
   } catch (error) {

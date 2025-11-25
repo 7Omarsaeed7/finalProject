@@ -21,7 +21,6 @@ const getOneProduct = async (req, res) => {
 };
 const createOneProduct = async (req, res) => {
   try {
-    // TODO: validate the data before delegating the creation of new product
     const data = req.body;
     const newProduct = await productsService.createOneProduct(data);
     res.status(200).send({ status: "OK", data: newProduct });
