@@ -13,7 +13,8 @@ const getAllProducts = async () => {
     return allProducts;
   } catch (error) {
     throw new ServiceError(
-      `DB Error: Failed to fetch all products: ${error.message}`
+      `DB Error: Failed to fetch all products: ${error.message}`,
+      400
     );
   }
 };
@@ -23,7 +24,8 @@ const createOneProduct = async (data) => {
     return newProduct;
   } catch (error) {
     throw new ServiceError(
-      `DB Error: Failed to create new product: ${error.message}`
+      `DB Error: Failed to create new product: ${error.message}`,
+      400
     );
   }
 };
@@ -33,7 +35,8 @@ const getOneProduct = async (id) => {
     return product;
   } catch (error) {
     throw new ServiceError(
-      `DB Error: Failed to fetch product ${id}: ${error.message}`
+      `DB Error: Failed to fetch product ${id}: ${error.message}`,
+      400
     );
   }
 };
@@ -46,7 +49,8 @@ const updateOneProduct = async (id, changes) => {
     return updatedProduct;
   } catch (error) {
     throw new ServiceError(
-      `DB Error: Failed to update product ${id}: ${error.message}`
+      `DB Error: Failed to update product ${id}: ${error.message}`,
+      400
     );
   }
 };
@@ -56,7 +60,8 @@ const deleteOneProduct = async (id) => {
     return deletedProduct ? 1 : 0;
   } catch (error) {
     throw new ServiceError(
-      `DB Error: Failed to delete product ${id}: ${error.message}`
+      `DB Error: Failed to delete product ${id}: ${error.message}`,
+      400
     );
   }
 };
