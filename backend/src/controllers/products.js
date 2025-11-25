@@ -13,3 +13,10 @@ const updateOneProduct = async (req, res) => {
 const deleteOneProduct = async (req, res) => {
   res.send("deleted one product");
 };
+module.exports = {
+  getAllProducts,
+  createOneProduct,
+  getOneProduct,
+  updateOneProduct,
+  deleteOneProduct,
+};
