@@ -1,19 +1,25 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const databaseConnection = require("./database/connect");
+const connectDB = require("./database/connect");
 const products = require("./routes/products");
 const PORT = process.env.PORT || 3500;
-async function startApp() {
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/products", products);
+
+async function startServer() {
   try {
-    await databaseConnection();
-    app.use(express.json());
-    app.use("/products", products);
+    await connectDB();
+
     app.listen(PORT, () => {
       console.log(`Started listening to port: ${PORT}`);
     });
   } catch (error) {
-    console.log("Failed to connect to db");
+    console.error("Failed to connect to database or start server:");
     process.exit(1);
   }
 }
-startApp();
+
+startServer();
