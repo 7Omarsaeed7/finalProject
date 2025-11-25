@@ -66,7 +66,7 @@ const updateOneProduct = async (id, changes) => {
 const deleteOneProduct = async (id) => {
   try {
     const deletedProduct = await products.deleteOneProduct(id);
-    if (deletedCount === 0) {
+    if (deletedProduct === 0) {
       throw new ServiceError(
         `Product with ID '${id}' not found for deletion.`,
         404
