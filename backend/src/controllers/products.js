@@ -1,22 +1,66 @@
+const productsService = require("../services/products");
 const getAllProducts = async (req, res) => {
-  res.send("all products");
-};
-const createOneProduct = async (req, res) => {
-  res.send("new product");
+  try {
+    const allProducts = await productsService.getAllProducts();
+    res.status(200).send({ status: "OK", data: allProducts });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ status: "FAILED", message: error.message });
+  }
 };
 const getOneProduct = async (req, res) => {
-  res.send("existing product");
+  try {
+    const oneProduct = await productsService.getOneProduct(req.params.id);
+    res.status(200).send({ status: "OK", data: oneProduct });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ status: "FAILED", message: error.message });
+  }
+};
+const createOneProduct = async (req, res) => {
+  try {
+    // TODO: validate the data before delegating the creation of new product
+    const data = req.body;
+    const newProduct = await productsService.createOneProduct(data);
+    res.status(200).send({ status: "OK", data: newProduct });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ status: "FAILED", message: error.message });
+  }
 };
 const updateOneProduct = async (req, res) => {
-  res.send("updated product");
+  try {
+    const changes = req.body;
+    const updatedProduct = await productsService.updateOneProduct(
+      req.params.id,
+      changes
+    );
+    res.status(200).send({ status: "OK", data: updatedProduct });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ status: "FAILED", message: error.message });
+  }
 };
 const deleteOneProduct = async (req, res) => {
-  res.send("deleted one product");
+  try {
+    const deletedProduct = await productsService.deleteOneProduct(
+      req.params.id
+    );
+    res.status(200).send({ status: "OK", data: deletedProduct });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send({ status: "FAILED", message: error.message });
+  }
 };
 module.exports = {
   getAllProducts,
-  createOneProduct,
   getOneProduct,
+  createOneProduct,
   updateOneProduct,
   deleteOneProduct,
 };
