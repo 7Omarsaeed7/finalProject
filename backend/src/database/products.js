@@ -1,4 +1,10 @@
-const express = require("express");
+class ServiceError extends Error {
+  constructor(message, status = 500) {
+    super(message);
+    this.name = "ServiceError";
+    this.status = status;
+  }
+}
 const Product = require("../models/Product");
 const getAllProducts = async () => {
   try {
@@ -6,8 +12,9 @@ const getAllProducts = async () => {
     const allProducts = await Product.find({});
     return allProducts;
   } catch (error) {
-    console.error("DB Error: Failed to fetch all products:", error.message);
-    throw error;
+    throw new ServiceError(
+      `DB Error: Failed to fetch all products: ${error.message}`
+    );
   }
 };
 const createOneProduct = async (data) => {
@@ -15,8 +22,9 @@ const createOneProduct = async (data) => {
     const newProduct = await Product.create(data);
     return newProduct;
   } catch (error) {
-    console.error("DB Error: Failed to create new product:", error.message);
-    throw error;
+    throw new ServiceError(
+      `DB Error: Failed to create new product: ${error.message}`
+    );
   }
 };
 const getOneProduct = async (id) => {
@@ -24,8 +32,9 @@ const getOneProduct = async (id) => {
     const product = await Product.findById(id);
     return product;
   } catch (error) {
-    console.error(`DB Error: Failed to fetch product ${id}:`, error.message);
-    throw error;
+    throw new ServiceError(
+      `DB Error: Failed to fetch product ${id}: ${error.message}`
+    );
   }
 };
 const updateOneProduct = async (id, changes) => {
@@ -36,8 +45,9 @@ const updateOneProduct = async (id, changes) => {
     });
     return updatedProduct;
   } catch (error) {
-    console.error(`DB Error: Failed to update product ${id}:`, error.message);
-    throw error;
+    throw new ServiceError(
+      `DB Error: Failed to update product ${id}: ${error.message}`
+    );
   }
 };
 const deleteOneProduct = async (id) => {
@@ -45,8 +55,9 @@ const deleteOneProduct = async (id) => {
     const deletedProduct = await Product.findByIdAndDelete(id);
     return deletedProduct ? 1 : 0;
   } catch (error) {
-    console.error(`DB Error: Failed to delete product ${id}:`, error.message);
-    throw error;
+    throw new ServiceError(
+      `DB Error: Failed to delete product ${id}: ${error.message}`
+    );
   }
 };
 module.exports = {
