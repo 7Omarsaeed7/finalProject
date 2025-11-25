@@ -34,7 +34,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      // Enforce specific categories for data integrity
       enum: [
         "T-Shirts",
         "Hoodies",
