@@ -17,3 +17,4 @@ router.get("/:id", getOneProduct);
 router.patch("/:id", updateOneProduct);
 // delete one product
 router.delete("/:id", deleteOneProduct);
+module.exports = router;
