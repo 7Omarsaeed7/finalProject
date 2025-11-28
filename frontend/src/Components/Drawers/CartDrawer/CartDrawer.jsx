@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function CartDrawer() {
   const { cartIsOpen, setCartIsOpen, cartProducts } = useCart();
   const noCartProducts = cartProducts.length;
-  console.log(cartProducts);
+
   return (
     <div
       className={`${styles.CartDrawer} ${
@@ -50,20 +50,17 @@ function InitialCart() {
   );
 }
 function AllCartProducts() {
-  const {
-    cartProducts,
-
-    setCartIsOpen,
-
-    TotalCheckOut,
-  } = useCart();
+  const { cartProducts, setCartIsOpen, TotalCheckOut } = useCart();
   return (
     <div className={`${styles.CartWrapper} row justify-content-between`}>
       <div className="cart-products">
         <div className="wrapper row mb-3 align-items-center gap-2">
           {cartProducts.length > 0 &&
             cartProducts.map((eachProduct) => (
-              <EachCartProduct eachProduct={eachProduct} key={eachProduct.id} />
+              <EachCartProduct
+                eachProduct={eachProduct}
+                key={eachProduct._id}
+              />
             ))}
         </div>
       </div>
@@ -98,6 +95,7 @@ function AllCartProducts() {
 function EachCartProduct({ eachProduct }) {
   const { onHandleTrashClick, handleUpdateCounter, setCartIsOpen } = useCart();
   const [counter, setCounter] = useState(eachProduct.counter);
+
   useEffect(() => {
     setCounter(eachProduct.counter);
   }, [eachProduct.counter]);

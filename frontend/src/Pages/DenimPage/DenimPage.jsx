@@ -4,7 +4,9 @@ import Footer from "../../Components/Footer/MainFooter/MainFooter";
 import NewArrival from "../../Components/Marquee/NewArrivalBar/NewArrivalBar";
 import SeconderyNav from "../../Components/NavBar/SeconderyNav/SeconderyNav";
 
+
 export default function DenimPage() {
+
   return (
     <>
       <AnnouncementBar />

@@ -16,7 +16,7 @@
   display: block;
   /* to show the cart-drawer */
   z-index: 10001;
-  /* overflow-y: scroll; */
+  /* overflow-x: scroll; */
   transition: var(--all-transition);
 }
 .searchHeader {
@@ -67,6 +67,9 @@
   font-weight: 600;
   font-size: 1rem;
   text-transform: uppercase;
+}
+.errmsg{
+  color: red;
 }
 @media (max-width: 992px) {
   .searchDrawer {

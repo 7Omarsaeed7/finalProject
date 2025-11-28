@@ -5,7 +5,7 @@ import NewArrival from "../../Components/Marquee/NewArrivalBar/NewArrivalBar";
 import SeconderyNav from "../../Components/NavBar/SeconderyNav/SeconderyNav";
 import { Link, useParams } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function ProductPage() {
   return (
     <>
@@ -18,10 +18,25 @@ export default function ProductPage() {
   );
 }
 function Product() {
+  const [product, setProduct] = useState({});
   const { id } = useParams();
-  const { tempAllProducts } = useCart();
-  const Initialproduct = tempAllProducts.find((p) => p.id === Number(id));
-  const [product, setProduct] = useState(Initialproduct);
+
+  useEffect(
+    function () {
+      async function getProducts() {
+        try {
+          const res = await fetch(`http://localhost:4000/api/products/${id}`);
+          const data = await res.json();
+          const NewDenimProducts = data.data;
+          setProduct(NewDenimProducts);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      getProducts();
+    },
+    [id]
+  );
   return (
     <main className={`${styles.productPage}`}>
       <div className="container">
@@ -135,7 +150,7 @@ function CallToAction({ product, setProduct }) {
     onHandleAddToCart,
   } = useCart();
   function handleBuyNow() {
-    if (cartProducts.find((p) => p.id === product.id)) return;
+    if (cartProducts.find((p) => p.id === product._id)) return;
     onHandleAddToCart(product, product.selectedSize, counter);
     setCartIsOpen((cartIsOpen) => !cartIsOpen);
   }
@@ -148,9 +163,9 @@ function CallToAction({ product, setProduct }) {
         ...product,
         counter: newCounter,
       });
-      if (cartProducts.find((p) => p.id === eachProduct.id))
+      if (cartProducts.find((p) => p.id === eachProduct._id))
         handleUpdateCounter(
-          eachProduct.id,
+          eachProduct._id,
           newCounter,
           eachProduct.selectedSize
         );
@@ -165,16 +180,15 @@ function CallToAction({ product, setProduct }) {
         ...product,
         counter: newCounter,
       });
-      if (cartProducts.find((p) => p.id === eachProduct.id))
+      if (cartProducts.find((p) => p.id === eachProduct._id))
         handleUpdateCounter(
-          eachProduct.id,
+          eachProduct._id,
           newCounter,
           eachProduct.selectedSize
         );
     }
   }
   function handleSizeSelection(newSelectedSize) {
-    console.log(newSelectedSize);
     setProduct((product) => ({
       ...product,
       selectedSize: newSelectedSize,
@@ -187,9 +201,11 @@ function CallToAction({ product, setProduct }) {
         className={`${styles.SizeSelection} col-12 d-flex gap-4  align-items-center`}
         onChange={(e) => handleSizeSelection(e.target.value)}
       >
-        {product.availableSizes.map((p) => (
-          <SizeList size={p.size} key={p.size} />
-        ))}
+        {product.availableSizes &&
+          product.availableSizes.length > 0 &&
+          product.availableSizes.map((p) => (
+            <SizeList size={p.size} key={p.size} />
+          ))}
       </select>
       <div className="addToCart row align-items-center justify-content-between ">
         <div

@@ -3,13 +3,34 @@ import logo from "../../assets/deckedout-logo.webp";
 import { Link } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { useState } from "react";
+
 export default function CheckOutPage() {
   const [isOpen, setIsOpen] = useState(false);
   const SHIPPING_VALUE = 110;
+  const [checkout, setCheckout] = useState(() => {
+    try {
+      const saved = localStorage.getItem("checkout");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const handlePayNow = (e) => {
+    e.preventDefault();
+    localStorage.setItem("checkout", JSON.stringify(checkout));
+    console.log(JSON.parse(localStorage.getItem("checkout")));
+  };
+
   return (
     <>
       <Header setIsOpen={setIsOpen} />
-      <MainContent SHIPPING_VALUE={SHIPPING_VALUE} isOpen={isOpen} />
+      <MainContent
+        SHIPPING_VALUE={SHIPPING_VALUE}
+        isOpen={isOpen}
+        setCheckout={setCheckout}
+        checkout={checkout}
+        onHandlePayNow={handlePayNow}
+      />
     </>
   );
 }
@@ -34,19 +55,34 @@ function Header({ setIsOpen }) {
     </div>
   );
 }
-function MainContent({ SHIPPING_VALUE, isOpen }) {
+function MainContent({
+  SHIPPING_VALUE,
+  isOpen,
+  setCheckout,
+  checkout,
+  onHandlePayNow,
+}) {
   return (
     <div className={styles.mainContainer}>
       <div className="row">
         {/* <!-- Checkout Form --> */}
         <div className="col-12 order-2 order-md-1 col-md-7">
           <form className={styles.checkoutForm}>
-            <ContactSection />
-            <DeliverySection />
-            <ShippingMethod SHIPPING_VALUE={SHIPPING_VALUE} />
-            <PaymentSection />
+            <ContactSection setCheckout={setCheckout} checkout={checkout} />
+            <DeliverySection checkout={checkout} setCheckout={setCheckout} />
+            <ShippingMethod
+              SHIPPING_VALUE={SHIPPING_VALUE}
+              checkout={checkout}
+              setCheckout={setCheckout}
+            />
+            <PaymentSection checkout={checkout} setCheckout={setCheckout} />
             {/* <!-- Pay Button --> */}
-            <input type="submit" className={styles.payBtn} value="Pay now" />
+            <input
+              type="submit"
+              className={styles.payBtn}
+              value="Pay now"
+              onClick={onHandlePayNow}
+            />
 
             {/* <!-- Footer --> */}
             <div className={styles.footerText}>
@@ -59,13 +95,21 @@ function MainContent({ SHIPPING_VALUE, isOpen }) {
     </div>
   );
 }
-function ContactSection() {
+function ContactSection({ setCheckout, checkout }) {
   return (
     <div className="mb-4 contact-form ">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className={`${styles.sectionTitle} mb-0`}>Contact</h2>
       </div>
-      <input type="email" className="form-control" placeholder="Email" />
+      <input
+        type="email"
+        className="form-control"
+        placeholder="Email"
+        value={checkout.email || ""}
+        onChange={(e) =>
+          setCheckout((checkout) => ({ ...checkout, email: e.target.value }))
+        }
+      />
       <div className="form-check mt-2 d-flex align-items-center gap-3">
         <input className="form-check-input" type="checkbox" id="emailOffers" />
         <label className="form-check-label" htmlFor="emailOffers">
@@ -75,13 +119,22 @@ function ContactSection() {
     </div>
   );
 }
-function DeliverySection() {
+function DeliverySection({ checkout, setCheckout }) {
   return (
     <div className="mb-4">
       <h2 className={styles.sectionTitle}>Delivery</h2>
       <div className="mb-3">
         <label className="form-label">Country/Region</label>
-        <select className="form-select formSelectt">
+        <select
+          className="form-select formSelectt"
+          value={checkout.country || "Egypt"}
+          onChange={(e) =>
+            setCheckout((checkout) => ({
+              ...checkout,
+              country: e.target.value,
+            }))
+          }
+        >
           <option>Egypt</option>
         </select>
       </div>
@@ -92,6 +145,13 @@ function DeliverySection() {
             className="form-control "
             placeholder="First name"
             required
+            value={checkout.name || ""}
+            onChange={(e) =>
+              setCheckout((checkout) => ({
+                ...checkout,
+                name: e.target.value,
+              }))
+            }
           />
         </div>
         <div className="col-md-6">
@@ -100,6 +160,13 @@ function DeliverySection() {
             className="form-control "
             placeholder="Last name"
             required
+            value={checkout.lastName || ""}
+            onChange={(e) =>
+              setCheckout((checkout) => ({
+                ...checkout,
+                lastName: e.target.value,
+              }))
+            }
           />
         </div>
       </div>
@@ -109,6 +176,13 @@ function DeliverySection() {
           className="form-control "
           placeholder="Address"
           required
+          value={checkout.address || ""}
+          onChange={(e) =>
+            setCheckout((checkout) => ({
+              ...checkout,
+              address: e.target.value,
+            }))
+          }
         />
       </div>
       <div className="mb-3">
@@ -117,6 +191,13 @@ function DeliverySection() {
           className="form-control "
           placeholder="Apartment, suite, etc."
           required
+          value={checkout.apartment || ""}
+          onChange={(e) =>
+            setCheckout((checkout) => ({
+              ...checkout,
+              apartment: e.target.value,
+            }))
+          }
         />
       </div>
       <div className="row mb-3">
@@ -126,10 +207,27 @@ function DeliverySection() {
             className="form-control"
             placeholder="City"
             required
+            value={checkout.city || ""}
+            onChange={(e) =>
+              setCheckout((checkout) => ({
+                ...checkout,
+                city: e.target.value,
+              }))
+            }
           />
         </div>
         <div className="col-md-8">
-          <select className="form-select formSelectt">
+          <select
+            className="form-select formSelectt"
+            required
+            value={checkout.state || "Cairo"}
+            onChange={(e) =>
+              setCheckout((checkout) => ({
+                ...checkout,
+                government: e.target.value,
+              }))
+            }
+          >
             <option>Cairo</option>
             <option>Alexandria</option>
             <option>Port Said</option>
@@ -143,6 +241,13 @@ function DeliverySection() {
           className="form-control"
           placeholder="Phone"
           required
+          value={checkout.phone || ""}
+          onChange={(e) =>
+            setCheckout((checkout) => ({
+              ...checkout,
+              phone: e.target.value,
+            }))
+          }
         />
       </div>
       <div className="form-check d-flex align-items-center gap-3">
@@ -154,38 +259,71 @@ function DeliverySection() {
     </div>
   );
 }
-function ShippingMethod({ SHIPPING_VALUE }) {
+function ShippingMethod({ SHIPPING_VALUE, checkout, setCheckout }) {
   return (
     <div className="mb-4">
       <h2 className={styles.sectionTitle}>Shipping method</h2>
       <div className={`${styles.shippingMethod} ${styles.active}`}>
         <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center">
-            <input type="radio" name="shipping" checked className="me-2" />
-            <span>Deliver To My Door Step</span>
-          </div>
+          <label
+            className="d-flex align-items-center"
+            style={{ cursor: "pointer" }}
+          >
+            <input
+              type="radio"
+              name="shipping"
+              className="me-2 form-check-input"
+              value={SHIPPING_VALUE}
+              checked={Number(checkout.shippingValue) === SHIPPING_VALUE}
+              onChange={(e) => {
+                console.log("Shipping changed to:", e.target.value);
+                setCheckout((prev) => ({
+                  ...prev,
+                  shippingValue: Number(e.target.value),
+                }));
+              }}
+            />
+
+            <span className="form-check-label">Deliver To My Door Step</span>
+          </label>
+
           <span className="fw-bold">{SHIPPING_VALUE} LE</span>
         </div>
       </div>
     </div>
   );
 }
-function PaymentSection() {
+function PaymentSection({ checkout, setCheckout }) {
   return (
     <div className="mb-4">
       <h2 className={styles.sectionTitle}>Payment</h2>
-      <div className={`${styles.paymentMethod} ${styles.active}`}>
-        <div className="d-flex align-items-center">
-          <input type="radio" name="payment" checked className="me-2" />
+      <div className={`${styles.shippingMethod} ${styles.active}`}>
+        <label
+          className="d-flex align-items-center"
+          style={{ cursor: "pointer" }}
+        >
+          <input
+            type="radio"
+            name="payment"
+            className="me-2"
+            value="cod"
+            checked={checkout.paymentMethod === "cod"}
+            onChange={(e) => {
+              setCheckout((prev) => ({
+                ...prev,
+                paymentMethod: e.target.value,
+              }));
+            }}
+          />
           <span>Cash on Delivery (COD)</span>
-        </div>
+        </label>
       </div>
     </div>
   );
 }
 function OrderSummary({ SHIPPING_VALUE, isOpen }) {
   const { cartProducts, TotalCheckOut, noCartProducts } = useCart();
-  console.log(cartProducts)
+
   return (
     <div
       className={`col-12 order-1 order-md-2 col-md-5  ${
@@ -199,14 +337,14 @@ function OrderSummary({ SHIPPING_VALUE, isOpen }) {
         ))}
 
         {/* <!-- Discount Code --> */}
-        <div className={`${styles.discountInput} mb-4`}>
+        {/* <div className={`${styles.discountInput} mb-4`}>
           <input
             type="text"
             className="form-control"
             placeholder="Discount code"
           />
           <button className={styles.applyBtn}>Apply</button>
-        </div>
+        </div> */}
 
         {/* <!-- Summary --> */}
         <div className={`${styles.summaryRow} d-flex `}>
@@ -233,7 +371,7 @@ function OrderSummary({ SHIPPING_VALUE, isOpen }) {
                   (acc, product) => acc + product.oldPrice * product.counter,
                   0
                 )}
-                  LE
+              LE
             </span>
             <span>{TotalCheckOut + SHIPPING_VALUE} LE</span>
           </div>
